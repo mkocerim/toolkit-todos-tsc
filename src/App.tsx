@@ -1,18 +1,28 @@
 import {useState} from 'react';
-import { useAppDispatch } from './redux/store';
-import { add } from './redux/todoSlice';
+import { useAppDispatch, useAppSelector } from './redux/store';
+import { add, remove, toggleCompleted } from './redux/todoSlice';
 
 function App() {
+  
+  const todos=useAppSelector(state=>state.todos)
 
   const [title, setTitle]=useState("");
   const dispatch=useAppDispatch()
 
   const onSave=()=>{
-    dispatch(add("title"))
+    dispatch(add(title))
     setTitle("")
 
   }
 
+  const onDelete=(id:string)=>{
+    dispatch(remove(id))
+  }
+
+  const toggle=(id:string)=>{
+    dispatch(toggleCompleted(id))
+
+  }
 
 
 
@@ -20,6 +30,13 @@ function App() {
     <div className="App">
   <input name="title" value={title} onChange={(e)=>setTitle(e.currentTarget.value)} />
   <button onClick={onSave}>Save</button>
+  <ol>
+    {todos.map(todo=><li key={todo.id}>
+      <button  onClick={()=>toggle(todo.id)}>{todo.completed ? "Mark Not Completed" : "Mark Completed"}</button>
+      <button  onClick={()=>onDelete(todo.id)}>Delete</button>
+      <span>{todo.title}</span>
+      </li>)}
+  </ol>
     </div>
   );
 }
